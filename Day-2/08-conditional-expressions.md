@@ -93,6 +93,7 @@ One common use of a conditional expression is to select between two values based
 
 Example: Instance Type Based on Environment
 
+'''hcl
 variable "environment" {
   type    = string
   default = "development"
@@ -106,6 +107,7 @@ resource "aws_instance" "example" {
     Name = "MyInstance"
   }
 }
+'''
 
 Explanation:
 If var.environment is "production", the instance type will be "m5.large".
@@ -116,6 +118,7 @@ You can use a conditional expression to dynamically set a resource attribute. Fo
 
 Example: Security Group Rule Based on a Condition
 
+'''hcl
 variable "enable_https" {
   type    = bool
   default = true
@@ -140,6 +143,8 @@ resource "aws_security_group" "example" {
     cidr_blocks = var.enable_https ? ["0.0.0.0/0"] : []
   }
 }
+'''
+
 Explanation:
 If var.enable_https is true, the rule for port 443 (HTTPS) will be added.
 If var.enable_https is false, the rule will be skipped (because null and an empty list [] are ignored).
@@ -149,6 +154,7 @@ You might want to assign a default value to a variable or resource attribute bas
 
 Example: Default Disk Size
 
+'''hcl
 variable "disk_size" {
   type    = number
   default = 20
@@ -163,6 +169,8 @@ resource "aws_instance" "example" {
     volume_size = var.disk_size != 0 ? var.disk_size : 30  # Default to 30 if disk_size is 0
   }
 }
+'''
+
 Explanation:
 If var.disk_size is provided and is not 0, the instance will have the size defined in the disk_size variable.
 If var.disk_size is 0, the instance will be created with a default disk size of 30 GB.
@@ -172,6 +180,7 @@ You can use nested conditional expressions to switch between more than two value
 
 Example: Selecting an AMI Based on the Environment
 
+'''hcl
 variable "environment" {
   type    = string
   default = "development"
@@ -184,6 +193,8 @@ resource "aws_instance" "example" {
 
   instance_type = "t2.micro"
 }
+'''
+
 Explanation:
 If var.environment is "production", the AMI will be "ami-prod-12345".
 If var.environment is "staging", the AMI will be "ami-staging-12345".
@@ -194,6 +205,7 @@ In some cases, you may want to create a resource conditionally, such as creating
 
 Example: Creating a Resource Conditionally
 
+'''hcl
 variable "create_extra_instance" {
   type    = bool
   default = false
@@ -212,6 +224,8 @@ resource "aws_instance" "extra" {
 
   depends_on = [aws_instance.primary]
 }
+'''
+
 Explanation:
 If var.create_extra_instance is true, an additional instance (aws_instance.extra) will be created (because count = 1).
 If var.create_extra_instance is false, the count will be 0, so the extra instance will not be created.
